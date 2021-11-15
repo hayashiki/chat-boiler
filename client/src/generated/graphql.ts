@@ -97,12 +97,12 @@ export type MessagesQueryVariables = Exact<{
 
 export type MessagesQuery = { __typename?: 'Query', messages: Array<{ __typename?: 'Message', id: string, text: string, roomId: string }> };
 
-export type Unnamed_1_SubscriptionVariables = Exact<{
+export type MessagePostedSubscriptionVariables = Exact<{
   roomId: Scalars['ID'];
 }>;
 
 
-export type Unnamed_1_Subscription = { __typename?: 'Subscription', messagePosted: { __typename?: 'Message', id: string, roomId: string, text: string } };
+export type MessagePostedSubscription = { __typename?: 'Subscription', messagePosted: { __typename?: 'Message', id: string, roomId: string, text: string } };
 
 
 export const PostMessageDocument = gql`
@@ -255,8 +255,8 @@ export function useMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<M
 export type MessagesQueryHookResult = ReturnType<typeof useMessagesQuery>;
 export type MessagesLazyQueryHookResult = ReturnType<typeof useMessagesLazyQuery>;
 export type MessagesQueryResult = Apollo.QueryResult<MessagesQuery, MessagesQueryVariables>;
-export const Document = gql`
-    subscription ($roomId: ID!) {
+export const MessagePostedDocument = gql`
+    subscription messagePosted($roomId: ID!) {
   messagePosted(roomId: $roomId) {
     id
     roomId
@@ -266,24 +266,24 @@ export const Document = gql`
     `;
 
 /**
- * __useSubscription__
+ * __useMessagePostedSubscription__
  *
- * To run a query within a React component, call `useSubscription` and pass it any options that fit your needs.
- * When your component renders, `useSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useMessagePostedSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useMessagePostedSubscription` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useSubscription({
+ * const { data, loading, error } = useMessagePostedSubscription({
  *   variables: {
  *      roomId: // value for 'roomId'
  *   },
  * });
  */
-export function useSubscription(baseOptions: Apollo.SubscriptionHookOptions<Subscription, SubscriptionVariables>) {
+export function useMessagePostedSubscription(baseOptions: Apollo.SubscriptionHookOptions<MessagePostedSubscription, MessagePostedSubscriptionVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useSubscription<Subscription, SubscriptionVariables>(Document, options);
+        return Apollo.useSubscription<MessagePostedSubscription, MessagePostedSubscriptionVariables>(MessagePostedDocument, options);
       }
-export type SubscriptionHookResult = ReturnType<typeof useSubscription>;
-export type SubscriptionResult = Apollo.SubscriptionResult<Subscription>;
+export type MessagePostedSubscriptionHookResult = ReturnType<typeof useMessagePostedSubscription>;
+export type MessagePostedSubscriptionResult = Apollo.SubscriptionResult<MessagePostedSubscription>;

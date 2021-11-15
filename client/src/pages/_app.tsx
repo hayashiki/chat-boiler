@@ -1,6 +1,8 @@
 import React from 'react'
 import { AppProps } from 'next/app'
 import Head from 'next/head'
+import { useApollo } from "@/lib/graphql";
+import { ApolloProvider } from "@apollo/client";
 
 function App({ Component, pageProps }: AppProps): JSX.Element {
   React.useEffect(() => {
@@ -11,6 +13,8 @@ function App({ Component, pageProps }: AppProps): JSX.Element {
     }
   }, [])
 
+  const apolloClient = useApollo(pageProps.initialApolloState)
+
   return (
     <React.Fragment>
       <Head>
@@ -20,7 +24,9 @@ function App({ Component, pageProps }: AppProps): JSX.Element {
           content="minimum-scale=1, initial-scale=1, width=device-width"
         />
       </Head>
-      <Component {...pageProps} />
+      <ApolloProvider client={apolloClient}>
+        <Component {...pageProps} />
+      </ApolloProvider>
     </React.Fragment>
   )
 }

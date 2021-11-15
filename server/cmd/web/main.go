@@ -61,8 +61,6 @@ func Run() error {
 	d.Inject(conf)
 	r := chi.NewRouter()
 	app.Routing(r, d)
-
-
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 
 	server := http.Server{

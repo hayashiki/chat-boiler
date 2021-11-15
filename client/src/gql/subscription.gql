@@ -1,4 +1,4 @@
-subscription($roomId: ID!) {
+subscription messagePosted($roomId: ID!) {
     messagePosted(roomId: $roomId) {
         id
         roomId
