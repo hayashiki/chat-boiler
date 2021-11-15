@@ -1,0 +1,7 @@
+subscription($roomId: ID!) {
+    messagePosted(roomId: $roomId) {
+        id
+        roomId
+        text
+    }
+}

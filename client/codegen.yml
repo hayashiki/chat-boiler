@@ -1,4 +1,4 @@
-schema: '../schema/*.graphql'
+schema: '../server/*.graphqls'
 documents:
   - ./src/**/*.graphql
   - ./src/**/*.gql

@@ -1,0 +1,16 @@
+mutation postMessage ($roomId: ID!, $text: String!) {
+    postMessage(roomId: $roomId, text: $text) {
+        id
+        text
+        roomId
+    }
+}
+
+mutation createRoom ($name: String!, $description: String) {
+    createRoom(name: $name, description: $description) {
+        id
+        name
+        disabled
+        description
+    }
+}

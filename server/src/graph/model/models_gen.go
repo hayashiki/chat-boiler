@@ -4,7 +4,7 @@ package model
 
 type Message struct {
 	ID     string `json:"id"`
-	RoomID string `json:"room_id"`
+	RoomID string `json:"roomId"`
 	Text   string `json:"text"`
 }
 

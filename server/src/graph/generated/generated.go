@@ -108,7 +108,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Message.ID(childComplexity), true
 
-	case "Message.room_id":
+	case "Message.roomId":
 		if e.complexity.Message.RoomID == nil {
 			break
 		}
@@ -144,7 +144,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.PostMessage(childComplexity, args["room_id"].(string), args["text"].(string)), true
+		return e.complexity.Mutation.PostMessage(childComplexity, args["roomId"].(string), args["text"].(string)), true
 
 	case "Query.messages":
 		if e.complexity.Query.Messages == nil {
@@ -156,7 +156,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Messages(childComplexity, args["room_id"].(string)), true
+		return e.complexity.Query.Messages(childComplexity, args["roomId"].(string)), true
 
 	case "Query.rooms":
 		if e.complexity.Query.Rooms == nil {
@@ -210,7 +210,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Subscription.MessagePosted(childComplexity, args["room_id"].(string)), true
+		return e.complexity.Subscription.MessagePosted(childComplexity, args["roomId"].(string)), true
 
 	}
 	return 0, false
@@ -303,22 +303,22 @@ var sources = []*ast.Source{
 
 type Message {
   id: ID!
-  room_id: ID!
+  roomId: ID!
   text: String!
 }
 
 type Subscription {
-  messagePosted(room_id: ID!): Message!
+  messagePosted(roomId: ID!): Message!
 }
 
 type Mutation {
   createRoom(name: String!, description: String): Room
-  postMessage(room_id: ID!, text: String!): Message
+  postMessage(roomId: ID!, text: String!): Message
 }
 
 type Query {
   rooms: [Room!]!
-  messages(room_id: String!): [Message!]!
+  messages(roomId: String!): [Message!]!
 }
 `, BuiltIn: false},
 }
@@ -356,14 +356,14 @@ func (ec *executionContext) field_Mutation_postMessage_args(ctx context.Context,
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["room_id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("room_id"))
+	if tmp, ok := rawArgs["roomId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roomId"))
 		arg0, err = ec.unmarshalNID2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["room_id"] = arg0
+	args["roomId"] = arg0
 	var arg1 string
 	if tmp, ok := rawArgs["text"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("text"))
@@ -395,14 +395,14 @@ func (ec *executionContext) field_Query_messages_args(ctx context.Context, rawAr
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["room_id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("room_id"))
+	if tmp, ok := rawArgs["roomId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roomId"))
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["room_id"] = arg0
+	args["roomId"] = arg0
 	return args, nil
 }
 
@@ -410,14 +410,14 @@ func (ec *executionContext) field_Subscription_messagePosted_args(ctx context.Co
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["room_id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("room_id"))
+	if tmp, ok := rawArgs["roomId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roomId"))
 		arg0, err = ec.unmarshalNID2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["room_id"] = arg0
+	args["roomId"] = arg0
 	return args, nil
 }
 
@@ -494,7 +494,7 @@ func (ec *executionContext) _Message_id(ctx context.Context, field graphql.Colle
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Message_room_id(ctx context.Context, field graphql.CollectedField, obj *model.Message) (ret graphql.Marshaler) {
+func (ec *executionContext) _Message_roomId(ctx context.Context, field graphql.CollectedField, obj *model.Message) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -628,7 +628,7 @@ func (ec *executionContext) _Mutation_postMessage(ctx context.Context, field gra
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().PostMessage(rctx, args["room_id"].(string), args["text"].(string))
+		return ec.resolvers.Mutation().PostMessage(rctx, args["roomId"].(string), args["text"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -702,7 +702,7 @@ func (ec *executionContext) _Query_messages(ctx context.Context, field graphql.C
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Messages(rctx, args["room_id"].(string))
+		return ec.resolvers.Query().Messages(rctx, args["roomId"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -987,7 +987,7 @@ func (ec *executionContext) _Subscription_messagePosted(ctx context.Context, fie
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().MessagePosted(rctx, args["room_id"].(string))
+		return ec.resolvers.Subscription().MessagePosted(rctx, args["roomId"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2160,8 +2160,8 @@ func (ec *executionContext) _Message(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "room_id":
-			out.Values[i] = ec._Message_room_id(ctx, field, obj)
+		case "roomId":
+			out.Values[i] = ec._Message_roomId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

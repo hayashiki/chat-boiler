@@ -6,13 +6,22 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "export": "next build && next export",
+    "fmt": "prettier --write 'src/**/*.{js,json,ts,tsx}'",
+    "fmt:quick": "pretty-quick --staged",
+    "lint:fix": "eslint --ext js,ts,tsx . --fix",
+    "generate": "graphql-codegen",
+    "storybook": "start-storybook -p 9009 -s public",
+    "build-storybook": "build-storybook -s public"
   },
   "dependencies": {
     "formik": "^2.2.9",
+    "graphql": "^16.0.1",
     "next": "12.0.3",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "subscriptions-transport-ws": "^0.11.0",
     "yup": "^0.32.11"
   },
   "devDependencies": {

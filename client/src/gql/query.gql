@@ -1,0 +1,20 @@
+query rooms {
+    rooms {
+        id
+        name
+        disabled
+        description
+        own_messages {
+            __typename
+        }
+    }
+}
+
+query messages($roomId: String!) {
+    messages(roomId: $roomId) {
+        id
+        text
+        roomId
+    }
+}
+
