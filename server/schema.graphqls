@@ -1,0 +1,27 @@
+type Room {
+  id: ID!
+  name: String!
+  description: String
+  disabled: Boolean!
+  own_messages: [Message!]!
+}
+
+type Message {
+  id: ID!
+  room_id: ID!
+  text: String!
+}
+
+type Subscription {
+  messagePosted(room_id: ID!): Message!
+}
+
+type Mutation {
+  createRoom(name: String!, description: String): Room
+  postMessage(room_id: ID!, text: String!): Message
+}
+
+type Query {
+  rooms: [Room!]!
+  messages(room_id: String!): [Message!]!
+}

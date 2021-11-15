@@ -7,7 +7,6 @@ RUN apk add --no-cache upx && \
     go version && \
     go mod download
 RUN go get -u github.com/cosmtrek/air
-RUN go get -u github.com/k-yomo/pubsub_cli
 COPY . .
 
-CMD cd cmd/sub && air -c .air.toml
+CMD cd cmd/web && air -c .air.toml

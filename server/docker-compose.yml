@@ -1,0 +1,57 @@
+version: '3.8'
+services:
+  app:
+#    env_file: ../.env
+    build:
+      context: "."
+      dockerfile: cmd/web/dev.Dockerfile
+    tty: true
+    environment:
+#      PUBSUB_EMULATOR_HOST: pubsub:8085
+#      PUBSUB_PROJECT_ID: local
+      GCP_PROJECT: local
+      DATASTORE_EMULATOR_HOST: datastore:8081
+      DATASTORE_PROJECT_ID: local
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      - datastore
+      - redis
+    volumes:
+      - .:/app
+    ports:
+      - 8080:8080
+#  pubsub:
+#    image: google/cloud-sdk:latest
+#    command: gcloud beta emulators pubsub start --project=local --host-port=0.0.0.0:8085
+#    ports:
+#      - 8085:8085
+
+  datastore:
+    image: google/cloud-sdk:latest
+    command: gcloud beta emulators datastore start --project=local  --host-port=0.0.0.0:8081
+    ports:
+      - 8081:8081
+    environment:
+      DATASTORE_PROJECT_ID: local
+    volumes:
+      - datastore_volume:/root/.config/gcloud/emulators/datastore/WEB-INF/appengine-generated
+
+  dsui:
+    image: mdzhang/dsui
+    command: dsui
+    environment:
+      DATASTORE_PROJECT_ID: local
+      DATASTORE_EMULATOR_HOST: datastore:8081
+    depends_on:
+      - datastore
+    ports:
+      - "3002:3000"
+
+  redis:
+    image: redis:5.0.5-alpine
+#    volumes:
+#      - redis-data:/data
+    ports:
+      - 6379:6379
+volumes:
+  datastore_volume:
