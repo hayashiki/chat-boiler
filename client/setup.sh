@@ -4,7 +4,10 @@ wget https://gist.githubusercontent.com/hayashiki/3ffc6d8658c68663d2ff7bb91d291f
 yarn add graphql
 # いらんかも
 yarn add subscriptions-transport-ws
-yarn add @apollo/client
+yarn add -D @apollo/client
+
+yarn add tailwindcss
+uarn add autoprefixer
 
 # TODO lib/graphqlのWS更新
 # アップデートしてもよいかも。failedしたときのオブザーバ対応とかが反映されてない

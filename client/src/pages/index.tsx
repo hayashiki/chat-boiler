@@ -47,14 +47,31 @@ const Index: NextPage = () => {
         return <div>No data found</div>
     }
 
-    return <div>
-        {messages.map((m, i) => <div key={i}>{m.text}</div>)}
-        <input
-          value={inputValue}
-          onChange={handleChange}
-        />
-        <button onClick={handleClick}>Submit</button>
-    </div>
+    return (
+      <div className="flex flex-col h-screen bg-gray-50">
+        <div className="grid place-items-center mx-2 md:my-20 my-10">
+          <div
+            className="w-11/12 p-12 sm:w-8/12 md:w-6/12 lg:w-5/12 2xl:w-4/12
+            px-6 py-10 sm:px-10 sm:py-6
+            bg-white rounded-lg shadow-md lg:shadow-lg"
+          >
+            <h2 className="text-center font-semibold text-3xl lg:text-4xl text-gray-800">
+              Chat
+            </h2>
+            {messages.map((m, i) => <div key={i}>{m.text}</div>)}
+            <input
+              value={inputValue}
+              onChange={handleChange}
+              className="block w-full py-3 px-1 mt-2
+                      text-gray-800 appearance-none
+                      border-b-2 border-gray-100
+                      focus:text-gray-500 focus:outline-none focus:border-gray-200"
+            />
+            <button onClick={handleClick}>Submit</button>
+          </div>
+        </div>
+      </div>
+    )
 }
 
 export default Index;

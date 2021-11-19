@@ -4,15 +4,9 @@ import Head from 'next/head'
 import { useApollo } from "@/lib/graphql";
 import { ApolloProvider } from "@apollo/client";
 
-function App({ Component, pageProps }: AppProps): JSX.Element {
-  React.useEffect(() => {
-    // Remove the server-side injected CSS.
-    const jssStyles = document.querySelector('#jss-server-side')
-    if (jssStyles) {
-      jssStyles.parentElement?.removeChild(jssStyles)
-    }
-  }, [])
+import "../styles/tailwind.css";
 
+function App({ Component, pageProps }: AppProps): JSX.Element {
   const apolloClient = useApollo(pageProps.initialApolloState)
 
   return (

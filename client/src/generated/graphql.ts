@@ -17,8 +17,10 @@ export type Scalars = {
 export type Message = {
   __typename?: 'Message';
   id: Scalars['ID'];
+  isSender: Scalars['Boolean'];
   roomId: Scalars['ID'];
   text: Scalars['String'];
+  userID: Scalars['ID'];
 };
 
 export type Mutation = {
@@ -95,7 +97,7 @@ export type MessagesQueryVariables = Exact<{
 }>;
 
 
-export type MessagesQuery = { __typename?: 'Query', messages: Array<{ __typename?: 'Message', id: string, text: string, roomId: string }> };
+export type MessagesQuery = { __typename?: 'Query', messages: Array<{ __typename?: 'Message', id: string, text: string, roomId: string, userID: string, isSender: boolean }> };
 
 export type MessagePostedSubscriptionVariables = Exact<{
   roomId: Scalars['ID'];
@@ -224,6 +226,8 @@ export const MessagesDocument = gql`
     id
     text
     roomId
+    userID
+    isSender
   }
 }
     `;
