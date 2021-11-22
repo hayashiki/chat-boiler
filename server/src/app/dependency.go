@@ -1,12 +1,12 @@
 package app
 
 import (
-	"github.com/hayashiki/gql-chat/server/src/config"
-	"github.com/hayashiki/gql-chat/server/src/graph"
-	"github.com/hayashiki/gql-chat/server/src/infra/ds"
-	"github.com/hayashiki/gql-chat/server/src/infra/ds/message"
-	"github.com/hayashiki/gql-chat/server/src/infra/ds/room"
-	"github.com/hayashiki/gql-chat/server/src/infra/redis"
+	"github.com/hayashiki/chat-boiler/server/src/config"
+	"github.com/hayashiki/chat-boiler/server/src/graph"
+	"github.com/hayashiki/chat-boiler/server/src/infra/ds"
+	"github.com/hayashiki/chat-boiler/server/src/infra/ds/message"
+	"github.com/hayashiki/chat-boiler/server/src/infra/ds/room"
+	"github.com/hayashiki/chat-boiler/server/src/infra/redis"
 	"net/http"
 	"os"
 )

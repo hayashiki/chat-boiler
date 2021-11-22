@@ -3,10 +3,10 @@ package graph
 import (
 	"encoding/json"
 	"github.com/go-redis/redis"
-	"github.com/hayashiki/gql-chat/server/src/graph/model"
-	"github.com/hayashiki/gql-chat/server/src/infra/ds"
-	"github.com/hayashiki/gql-chat/server/src/infra/ds/message"
-	"github.com/hayashiki/gql-chat/server/src/infra/ds/room"
+	"github.com/hayashiki/chat-boiler/server/src/graph/model"
+	"github.com/hayashiki/chat-boiler/server/src/infra/ds"
+	"github.com/hayashiki/chat-boiler/server/src/infra/ds/message"
+	"github.com/hayashiki/chat-boiler/server/src/infra/ds/room"
 	"log"
 	"sync"
 )

@@ -2,7 +2,7 @@ package room
 
 import (
 	"github.com/google/uuid"
-	"github.com/hayashiki/gql-chat/server/src/graph/model"
+	"github.com/hayashiki/chat-boiler/server/src/graph/model"
 )
 
 type Entity struct {

@@ -9,10 +9,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/hayashiki/gql-chat/server/src/graph/generated"
-	"github.com/hayashiki/gql-chat/server/src/graph/model"
-	"github.com/hayashiki/gql-chat/server/src/infra/ds/message"
-	"github.com/hayashiki/gql-chat/server/src/infra/ds/room"
+	"github.com/hayashiki/chat-boiler/server/src/graph/generated"
+	"github.com/hayashiki/chat-boiler/server/src/graph/model"
+	"github.com/hayashiki/chat-boiler/server/src/infra/ds/message"
+	"github.com/hayashiki/chat-boiler/server/src/infra/ds/room"
 	"go.mercari.io/datastore/boom"
 )
 

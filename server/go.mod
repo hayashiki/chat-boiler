@@ -1,4 +1,4 @@
-module github.com/hayashiki/gql-chat/server
+module github.com/hayashiki/chat-boiler/server
 
 go 1.16
 

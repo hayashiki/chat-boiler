@@ -2,7 +2,7 @@ package ds
 
 import (
 	"context"
-	"github.com/hayashiki/gql-chat/server/src/config"
+	"github.com/hayashiki/chat-boiler/server/src/config"
 	"github.com/pkg/errors"
 	"log"
 

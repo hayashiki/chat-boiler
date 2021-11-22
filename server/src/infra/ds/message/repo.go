@@ -2,7 +2,7 @@ package message
 
 import (
 	"context"
-	"github.com/hayashiki/gql-chat/server/src/infra/ds"
+	"github.com/hayashiki/chat-boiler/server/src/infra/ds"
 	"github.com/pkg/errors"
 	"go.mercari.io/datastore/boom"
 )

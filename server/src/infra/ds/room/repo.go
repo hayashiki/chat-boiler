@@ -2,7 +2,7 @@ package room
 
 import (
 	"context"
-	"github.com/hayashiki/gql-chat/server/src/infra/ds"
+	"github.com/hayashiki/chat-boiler/server/src/infra/ds"
 	"go.mercari.io/datastore"
 
 	"github.com/pkg/errors"
