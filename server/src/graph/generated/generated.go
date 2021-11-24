@@ -46,14 +46,16 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Message struct {
-		ID     func(childComplexity int) int
-		RoomID func(childComplexity int) int
-		Text   func(childComplexity int) int
+		ID       func(childComplexity int) int
+		IsSender func(childComplexity int) int
+		RoomID   func(childComplexity int) int
+		Text     func(childComplexity int) int
+		UserID   func(childComplexity int) int
 	}
 
 	Mutation struct {
 		CreateRoom  func(childComplexity int, name string, description *string) int
-		PostMessage func(childComplexity int, roomID string, text string) int
+		PostMessage func(childComplexity int, input model.CreateMessageInput) int
 	}
 
 	Query struct {
@@ -76,7 +78,7 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	CreateRoom(ctx context.Context, name string, description *string) (*model.Room, error)
-	PostMessage(ctx context.Context, roomID string, text string) (*model.Message, error)
+	PostMessage(ctx context.Context, input model.CreateMessageInput) (*model.Message, error)
 }
 type QueryResolver interface {
 	Rooms(ctx context.Context) ([]*model.Room, error)
@@ -108,6 +110,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Message.ID(childComplexity), true
 
+	case "Message.isSender":
+		if e.complexity.Message.IsSender == nil {
+			break
+		}
+
+		return e.complexity.Message.IsSender(childComplexity), true
+
 	case "Message.roomId":
 		if e.complexity.Message.RoomID == nil {
 			break
@@ -121,6 +130,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Message.Text(childComplexity), true
+
+	case "Message.userId":
+		if e.complexity.Message.UserID == nil {
+			break
+		}
+
+		return e.complexity.Message.UserID(childComplexity), true
 
 	case "Mutation.createRoom":
 		if e.complexity.Mutation.CreateRoom == nil {
@@ -144,7 +160,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.PostMessage(childComplexity, args["roomId"].(string), args["text"].(string)), true
+		return e.complexity.Mutation.PostMessage(childComplexity, args["input"].(model.CreateMessageInput)), true
 
 	case "Query.messages":
 		if e.complexity.Query.Messages == nil {
@@ -305,15 +321,23 @@ type Message {
   id: ID!
   roomId: ID!
   text: String!
+  userId: ID!
+  isSender: Boolean!
 }
 
 type Subscription {
   messagePosted(roomId: ID!): Message!
 }
 
+input CreateMessageInput {
+  roomId: ID!
+  userId: ID!
+  text: String!
+}
+
 type Mutation {
   createRoom(name: String!, description: String): Room
-  postMessage(roomId: ID!, text: String!): Message
+  postMessage(input: CreateMessageInput!): Message
 }
 
 type Query {
@@ -355,24 +379,15 @@ func (ec *executionContext) field_Mutation_createRoom_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_postMessage_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["roomId"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roomId"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+	var arg0 model.CreateMessageInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNCreateMessageInput2githubᚗcomᚋhayashikiᚋchatᚑboilerᚋserverᚋsrcᚋgraphᚋmodelᚐCreateMessageInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["roomId"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["text"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("text"))
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["text"] = arg1
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -564,6 +579,76 @@ func (ec *executionContext) _Message_text(ctx context.Context, field graphql.Col
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Message_userId(ctx context.Context, field graphql.CollectedField, obj *model.Message) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Message",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Message_isSender(ctx context.Context, field graphql.CollectedField, obj *model.Message) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Message",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsSender, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_createRoom(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -600,7 +685,7 @@ func (ec *executionContext) _Mutation_createRoom(ctx context.Context, field grap
 	}
 	res := resTmp.(*model.Room)
 	fc.Result = res
-	return ec.marshalORoom2ᚖgithubᚗcomᚋhayashikiᚋgqlᚑchatᚋserverᚋsrcᚋgraphᚋmodelᚐRoom(ctx, field.Selections, res)
+	return ec.marshalORoom2ᚖgithubᚗcomᚋhayashikiᚋchatᚑboilerᚋserverᚋsrcᚋgraphᚋmodelᚐRoom(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_postMessage(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -628,7 +713,7 @@ func (ec *executionContext) _Mutation_postMessage(ctx context.Context, field gra
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().PostMessage(rctx, args["roomId"].(string), args["text"].(string))
+		return ec.resolvers.Mutation().PostMessage(rctx, args["input"].(model.CreateMessageInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -639,7 +724,7 @@ func (ec *executionContext) _Mutation_postMessage(ctx context.Context, field gra
 	}
 	res := resTmp.(*model.Message)
 	fc.Result = res
-	return ec.marshalOMessage2ᚖgithubᚗcomᚋhayashikiᚋgqlᚑchatᚋserverᚋsrcᚋgraphᚋmodelᚐMessage(ctx, field.Selections, res)
+	return ec.marshalOMessage2ᚖgithubᚗcomᚋhayashikiᚋchatᚑboilerᚋserverᚋsrcᚋgraphᚋmodelᚐMessage(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_rooms(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -674,7 +759,7 @@ func (ec *executionContext) _Query_rooms(ctx context.Context, field graphql.Coll
 	}
 	res := resTmp.([]*model.Room)
 	fc.Result = res
-	return ec.marshalNRoom2ᚕᚖgithubᚗcomᚋhayashikiᚋgqlᚑchatᚋserverᚋsrcᚋgraphᚋmodelᚐRoomᚄ(ctx, field.Selections, res)
+	return ec.marshalNRoom2ᚕᚖgithubᚗcomᚋhayashikiᚋchatᚑboilerᚋserverᚋsrcᚋgraphᚋmodelᚐRoomᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_messages(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -716,7 +801,7 @@ func (ec *executionContext) _Query_messages(ctx context.Context, field graphql.C
 	}
 	res := resTmp.([]*model.Message)
 	fc.Result = res
-	return ec.marshalNMessage2ᚕᚖgithubᚗcomᚋhayashikiᚋgqlᚑchatᚋserverᚋsrcᚋgraphᚋmodelᚐMessageᚄ(ctx, field.Selections, res)
+	return ec.marshalNMessage2ᚕᚖgithubᚗcomᚋhayashikiᚋchatᚑboilerᚋserverᚋsrcᚋgraphᚋmodelᚐMessageᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -959,7 +1044,7 @@ func (ec *executionContext) _Room_own_messages(ctx context.Context, field graphq
 	}
 	res := resTmp.([]*model.Message)
 	fc.Result = res
-	return ec.marshalNMessage2ᚕᚖgithubᚗcomᚋhayashikiᚋgqlᚑchatᚋserverᚋsrcᚋgraphᚋmodelᚐMessageᚄ(ctx, field.Selections, res)
+	return ec.marshalNMessage2ᚕᚖgithubᚗcomᚋhayashikiᚋchatᚑboilerᚋserverᚋsrcᚋgraphᚋmodelᚐMessageᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Subscription_messagePosted(ctx context.Context, field graphql.CollectedField) (ret func() graphql.Marshaler) {
@@ -1008,7 +1093,7 @@ func (ec *executionContext) _Subscription_messagePosted(ctx context.Context, fie
 			w.Write([]byte{'{'})
 			graphql.MarshalString(field.Alias).MarshalGQL(w)
 			w.Write([]byte{':'})
-			ec.marshalNMessage2ᚖgithubᚗcomᚋhayashikiᚋgqlᚑchatᚋserverᚋsrcᚋgraphᚋmodelᚐMessage(ctx, field.Selections, res).MarshalGQL(w)
+			ec.marshalNMessage2ᚖgithubᚗcomᚋhayashikiᚋchatᚑboilerᚋserverᚋsrcᚋgraphᚋmodelᚐMessage(ctx, field.Selections, res).MarshalGQL(w)
 			w.Write([]byte{'}'})
 		})
 	}
@@ -2136,6 +2221,45 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputCreateMessageInput(ctx context.Context, obj interface{}) (model.CreateMessageInput, error) {
+	var it model.CreateMessageInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "roomId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roomId"))
+			it.RoomID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "userId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+			it.UserID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "text":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("text"))
+			it.Text, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -2167,6 +2291,16 @@ func (ec *executionContext) _Message(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "text":
 			out.Values[i] = ec._Message_text(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "userId":
+			out.Values[i] = ec._Message_userId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "isSender":
+			out.Values[i] = ec._Message_isSender(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -2598,6 +2732,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) unmarshalNCreateMessageInput2githubᚗcomᚋhayashikiᚋchatᚑboilerᚋserverᚋsrcᚋgraphᚋmodelᚐCreateMessageInput(ctx context.Context, v interface{}) (model.CreateMessageInput, error) {
+	res, err := ec.unmarshalInputCreateMessageInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
 	res, err := graphql.UnmarshalID(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -2613,11 +2752,11 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	return res
 }
 
-func (ec *executionContext) marshalNMessage2githubᚗcomᚋhayashikiᚋgqlᚑchatᚋserverᚋsrcᚋgraphᚋmodelᚐMessage(ctx context.Context, sel ast.SelectionSet, v model.Message) graphql.Marshaler {
+func (ec *executionContext) marshalNMessage2githubᚗcomᚋhayashikiᚋchatᚑboilerᚋserverᚋsrcᚋgraphᚋmodelᚐMessage(ctx context.Context, sel ast.SelectionSet, v model.Message) graphql.Marshaler {
 	return ec._Message(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNMessage2ᚕᚖgithubᚗcomᚋhayashikiᚋgqlᚑchatᚋserverᚋsrcᚋgraphᚋmodelᚐMessageᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Message) graphql.Marshaler {
+func (ec *executionContext) marshalNMessage2ᚕᚖgithubᚗcomᚋhayashikiᚋchatᚑboilerᚋserverᚋsrcᚋgraphᚋmodelᚐMessageᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Message) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -2641,7 +2780,7 @@ func (ec *executionContext) marshalNMessage2ᚕᚖgithubᚗcomᚋhayashikiᚋgql
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNMessage2ᚖgithubᚗcomᚋhayashikiᚋgqlᚑchatᚋserverᚋsrcᚋgraphᚋmodelᚐMessage(ctx, sel, v[i])
+			ret[i] = ec.marshalNMessage2ᚖgithubᚗcomᚋhayashikiᚋchatᚑboilerᚋserverᚋsrcᚋgraphᚋmodelᚐMessage(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -2661,7 +2800,7 @@ func (ec *executionContext) marshalNMessage2ᚕᚖgithubᚗcomᚋhayashikiᚋgql
 	return ret
 }
 
-func (ec *executionContext) marshalNMessage2ᚖgithubᚗcomᚋhayashikiᚋgqlᚑchatᚋserverᚋsrcᚋgraphᚋmodelᚐMessage(ctx context.Context, sel ast.SelectionSet, v *model.Message) graphql.Marshaler {
+func (ec *executionContext) marshalNMessage2ᚖgithubᚗcomᚋhayashikiᚋchatᚑboilerᚋserverᚋsrcᚋgraphᚋmodelᚐMessage(ctx context.Context, sel ast.SelectionSet, v *model.Message) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -2671,7 +2810,7 @@ func (ec *executionContext) marshalNMessage2ᚖgithubᚗcomᚋhayashikiᚋgqlᚑ
 	return ec._Message(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNRoom2ᚕᚖgithubᚗcomᚋhayashikiᚋgqlᚑchatᚋserverᚋsrcᚋgraphᚋmodelᚐRoomᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Room) graphql.Marshaler {
+func (ec *executionContext) marshalNRoom2ᚕᚖgithubᚗcomᚋhayashikiᚋchatᚑboilerᚋserverᚋsrcᚋgraphᚋmodelᚐRoomᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Room) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -2695,7 +2834,7 @@ func (ec *executionContext) marshalNRoom2ᚕᚖgithubᚗcomᚋhayashikiᚋgqlᚑ
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNRoom2ᚖgithubᚗcomᚋhayashikiᚋgqlᚑchatᚋserverᚋsrcᚋgraphᚋmodelᚐRoom(ctx, sel, v[i])
+			ret[i] = ec.marshalNRoom2ᚖgithubᚗcomᚋhayashikiᚋchatᚑboilerᚋserverᚋsrcᚋgraphᚋmodelᚐRoom(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -2715,7 +2854,7 @@ func (ec *executionContext) marshalNRoom2ᚕᚖgithubᚗcomᚋhayashikiᚋgqlᚑ
 	return ret
 }
 
-func (ec *executionContext) marshalNRoom2ᚖgithubᚗcomᚋhayashikiᚋgqlᚑchatᚋserverᚋsrcᚋgraphᚋmodelᚐRoom(ctx context.Context, sel ast.SelectionSet, v *model.Room) graphql.Marshaler {
+func (ec *executionContext) marshalNRoom2ᚖgithubᚗcomᚋhayashikiᚋchatᚑboilerᚋserverᚋsrcᚋgraphᚋmodelᚐRoom(ctx context.Context, sel ast.SelectionSet, v *model.Room) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -3021,14 +3160,14 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return graphql.MarshalBoolean(*v)
 }
 
-func (ec *executionContext) marshalOMessage2ᚖgithubᚗcomᚋhayashikiᚋgqlᚑchatᚋserverᚋsrcᚋgraphᚋmodelᚐMessage(ctx context.Context, sel ast.SelectionSet, v *model.Message) graphql.Marshaler {
+func (ec *executionContext) marshalOMessage2ᚖgithubᚗcomᚋhayashikiᚋchatᚑboilerᚋserverᚋsrcᚋgraphᚋmodelᚐMessage(ctx context.Context, sel ast.SelectionSet, v *model.Message) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Message(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalORoom2ᚖgithubᚗcomᚋhayashikiᚋgqlᚑchatᚋserverᚋsrcᚋgraphᚋmodelᚐRoom(ctx context.Context, sel ast.SelectionSet, v *model.Room) graphql.Marshaler {
+func (ec *executionContext) marshalORoom2ᚖgithubᚗcomᚋhayashikiᚋchatᚑboilerᚋserverᚋsrcᚋgraphᚋmodelᚐRoom(ctx context.Context, sel ast.SelectionSet, v *model.Room) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

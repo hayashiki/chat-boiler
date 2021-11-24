@@ -2,10 +2,18 @@
 
 package model
 
-type Message struct {
-	ID     string `json:"id"`
+type CreateMessageInput struct {
 	RoomID string `json:"roomId"`
+	UserID string `json:"userId"`
 	Text   string `json:"text"`
+}
+
+type Message struct {
+	ID       string `json:"id"`
+	RoomID   string `json:"roomId"`
+	Text     string `json:"text"`
+	UserID   string `json:"userId"`
+	IsSender bool   `json:"isSender"`
 }
 
 type Room struct {

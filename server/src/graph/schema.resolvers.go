@@ -34,11 +34,11 @@ func (r *mutationResolver) CreateRoom(ctx context.Context, name string, descript
 	return newRoom.ToModel(), nil
 }
 
-func (r *mutationResolver) PostMessage(ctx context.Context, roomID string, text string) (*model.Message, error) {
+func (r *mutationResolver) PostMessage(ctx context.Context, input model.CreateMessageInput) (*model.Message, error) {
 	log.Println("called")
 	newMessage := &message.Entity{}
 	if err := r.transaction.RunInTransaction(ctx, func(tx *boom.Transaction) error {
-		newMessage = message.NewEntity(roomID, text)
+		newMessage = message.NewEntity(input.RoomID, input.Text)
 		log.Println("called", newMessage)
 		if err := r.messageRepo.Put(tx, newMessage); err != nil {
 			log.Println("called err", err)

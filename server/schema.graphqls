@@ -10,7 +10,7 @@ type Message {
   id: ID!
   roomId: ID!
   text: String!
-  userID: ID!
+  userId: ID!
   isSender: Boolean!
 }
 
@@ -18,9 +18,15 @@ type Subscription {
   messagePosted(roomId: ID!): Message!
 }
 
+input CreateMessageInput {
+  roomId: ID!
+  userId: ID!
+  text: String!
+}
+
 type Mutation {
   createRoom(name: String!, description: String): Room
-  postMessage(roomId: ID!, text: String!): Message
+  postMessage(input: CreateMessageInput!): Message
 }
 
 type Query {
