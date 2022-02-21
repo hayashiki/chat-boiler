@@ -136,6 +136,7 @@ jobs:
             ${{ runner.os }}-go-
       - name: Test
         run: go test ./...
+        working-directory: ./server
 #  deploy:
 #    if: github.event_name == 'push'
 #    needs: [docker_push]
