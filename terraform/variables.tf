@@ -5,7 +5,7 @@ variable "project" {
   type = string
 }
 
-variable "location" {
+variable "region" {
   type    = string
   default = "asia-northeast1"
 }

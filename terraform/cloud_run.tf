@@ -1,6 +1,6 @@
 data "google_cloud_run_service" "default" {
   name     = var.image_name
-  location = var.location
+  location = var.region
 
   depends_on = [
     google_project_service.enable_api
@@ -15,7 +15,7 @@ locals {
 
 resource "google_cloud_run_service" "default" {
   name     = var.image_name
-  location = var.location
+  location = var.region
 
   depends_on = [
     google_project_service.enable_api

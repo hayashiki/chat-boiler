@@ -10,9 +10,9 @@ resource "google_project_iam_member" "github_actions_default" {
   for_each = toset([
     "roles/cloudbuild.builds.builder",
     "roles/iam.serviceAccountUser",
-    "roles/iam.workloadIdentityUser",
+    "roles/iam.workloadIdentityPoolViewer",
     "roles/run.admin",
-    "roles/resourcemanager.projectIamAdmin",
+    "roles/resourcemanager.projectIamAdmin", // Enable grant project IAM role
     "roles/serviceusage.serviceUsageAdmin", // Enable APIs using serviceusage
     "roles/storage.admin",
   ])

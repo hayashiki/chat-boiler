@@ -1,0 +1,78 @@
+name: test-and-build
+on:
+  push:
+    paths:
+      - "terraform/**"
+env:
+  GCP_PROJECT: ${{secrets.GCP_PROJECT}}
+  GCP_PROJECT_NUM: ${{secrets.GCP_PROJECT_NUM}}
+  SERVICE_NAME: chat-boiler-api
+  REGION: asia-northeast1
+jobs:
+  terafform-apply:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: google-github-actions/setup-gcloud@v0
+        with:
+          project_id: ${{ env.GCP_PROJECT }}
+
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v0.3.1
+        with:
+          create_credentials_file: true
+          workload_identity_provider: projects/${{ env.GCP_PROJECT_NUM }}/locations/global/workloadIdentityPools/github-actions/providers/github-actions
+          service_account: github-actions@${{ env.GCP_PROJECT }}.iam.gserviceaccount.com
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Terraform format
+        id: fmt
+        run: terraform fmt -check -recursive
+        working-directory: ./terraform
+        continue-on-error: true
+
+      - name: Terraform init
+        id: init
+        run: |-
+          terraform init
+        continue-on-error: false
+        working-directory: ./terraform
+        env:
+          GOOGLE_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+        working-directory: ./terraform
+
+      - name: Terraform Plan
+        id: plan
+        run: |-
+          terraform plan -no-color \
+          -out=PLAN
+        working-directory: ./terraform
+        env:
+          GOOGLE_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
+
+      - name: Set image_tag
+        run: |-
+          echo "image_tag = latest" >> prod.auto.tfvars
+
+      - name: Terraform Apply
+        id: apply
+        run: |-
+          terraform apply PLAN
+        working-directory: ./terraform
+        env:
+          GOOGLE_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
