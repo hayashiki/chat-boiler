@@ -3,6 +3,7 @@ resource "google_project_service" "enable_api" {
     "iam.googleapis.com",
     "containerregistry.googleapis.com",
     "run.googleapis.com",
+    "compute.googleapis.com",
     "cloudresourcemanager.googleapis.com",
     "iamcredentials.googleapis.com",
   ])

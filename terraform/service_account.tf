@@ -11,6 +11,7 @@ resource "google_project_iam_member" "github_actions_default" {
     "roles/cloudbuild.builds.builder",
     "roles/iam.serviceAccountUser",
     "roles/run.admin",
+    "roles/resourcemanager.projectIamAdmin",
     "roles/serviceusage.serviceUsageAdmin", // Enable APIs using serviceusage
     "roles/storage.admin",
   ])

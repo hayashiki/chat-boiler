@@ -1,5 +1,5 @@
 data "google_cloud_run_service" "default" {
-  name     = var.name
+  name     = var.image_name
   location = var.location
 
   depends_on = [
@@ -9,12 +9,12 @@ data "google_cloud_run_service" "default" {
 
 locals {
   current_image = data.google_cloud_run_service.default.template != null ? data.google_cloud_run_service.default.template.0.spec.0.containers.0.image : null
-  new_image     = "gcr.io/${var.project}/go-boiler-api:${var.image_tag}"
+  new_image     = "gcr.io/${var.project}/${var.image_name}:${var.image_tag}"
   image         = (local.current_image != null && var.image_tag == "latest") ? local.current_image : local.new_image
 }
 
 resource "google_cloud_run_service" "default" {
-  name     = var.name
+  name     = var.image_name
   location = var.location
 
   depends_on = [
@@ -44,7 +44,7 @@ resource "google_cloud_run_service" "default" {
       }
 
       labels = {
-        service = var.name
+        service = var.image_name
       }
     }
   }

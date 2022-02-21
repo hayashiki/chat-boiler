@@ -10,25 +10,14 @@ variable "location" {
   default = "asia-northeast1"
 }
 
-# cloudrun service name
-variable "name" {
-  type    = string
-  default = "chat-boiler-api"
-}
-
 variable "repo" {
   type    = string
   default = "hayashiki/chat-boiler"
 }
 
-variable "gar_repository" {
-  type    = string
-  default = "hayashiki"
-}
-
 variable "image_name" {
   type    = string
-  default = "go-boiler-api"
+  default = "chat-boiler-api"
 }
 
 variable "image_tag" {
