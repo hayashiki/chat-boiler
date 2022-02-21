@@ -3,10 +3,10 @@ package graph
 import (
 	"encoding/json"
 	"github.com/go-redis/redis"
-	"github.com/hayashiki/chat-boiler/server/src/graph/model"
-	"github.com/hayashiki/chat-boiler/server/src/infra/ds"
-	"github.com/hayashiki/chat-boiler/server/src/infra/ds/message"
-	"github.com/hayashiki/chat-boiler/server/src/infra/ds/room"
+	model2 "github.com/hayashiki/chat-boiler/server/graph/model"
+	ds2 "github.com/hayashiki/chat-boiler/server/infra/ds"
+	message2 "github.com/hayashiki/chat-boiler/server/infra/ds/message"
+	room2 "github.com/hayashiki/chat-boiler/server/infra/ds/room"
 	"log"
 	"sync"
 )
@@ -17,18 +17,18 @@ import (
 
 type Resolver struct{
 	//pubsub *pubsub.Client
-	transaction  ds.Transactor
-	messageRepo message.Repository
-	roomRepo room.Repository
-	redis *redis.Client
-	mutex sync.Mutex
-	messageChannels map[string]chan *model.Message
+	transaction     ds2.Transactor
+	messageRepo     message2.Repository
+	roomRepo        room2.Repository
+	redis           *redis.Client
+	mutex           sync.Mutex
+	messageChannels map[string]chan *model2.Message
 }
 
 func NewResolver(
-	transactor ds.Transactor,
-	messageRepo message.Repository,
-	roomRepo room.Repository,
+	transactor ds2.Transactor,
+	messageRepo message2.Repository,
+	roomRepo room2.Repository,
 	redis *redis.Client,
 	) *Resolver {
 	res := &Resolver{
@@ -37,7 +37,7 @@ func NewResolver(
 		roomRepo:    roomRepo,
 		redis: redis,
 		mutex: sync.Mutex{},
-		messageChannels: map[string]chan *model.Message{},
+		messageChannels: map[string]chan *model2.Message{},
 	}
 	res.startSubscribingRedis()
 	return res
@@ -58,7 +58,7 @@ func (r *Resolver) startSubscribingRedis() {
 
 			switch msg := msgi.(type) {
 			case *redis.Message:
-				m := model.Message{}
+				m := model2.Message{}
 				if err := json.Unmarshal([]byte(msg.Payload), &m); err != nil {
 					log.Println(err)
 					continue

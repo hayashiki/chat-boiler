@@ -3,7 +3,6 @@ type Room {
   name: String!
   description: String
   disabled: Boolean!
-  own_messages: [Message!]!
 }
 
 type Message {
@@ -24,9 +23,14 @@ input CreateMessageInput {
   text: String!
 }
 
+input RoomInput {
+  name: String!
+  description: String!
+}
+
 type Mutation {
-  createRoom(name: String!, description: String): Room
-  postMessage(input: CreateMessageInput!): Message
+  createRoom(input: RoomInput!): Room
+  createMessage(input: CreateMessageInput!): Message
 }
 
 type Query {

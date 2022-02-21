@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-chi/chi"
-	"github.com/hayashiki/chat-boiler/server/src/app"
-	"github.com/hayashiki/chat-boiler/server/src/config"
+	app2 "github.com/hayashiki/chat-boiler/server/app"
+	config2 "github.com/hayashiki/chat-boiler/server/config"
 	"github.com/spf13/cobra"
 	"log"
 	"net/http"
@@ -35,6 +35,7 @@ func main()  {
 			return Run()
 		},
 	}
+
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -52,15 +53,15 @@ func Run() error {
 		port = defaultPort
 	}
 
-	conf, err := config.NewConfig()
+	conf, err := config2.NewConfig()
 	if err != nil {
 		log.Fatalf("failed to read config")
 	}
 
-	d := &app.Dependency{}
+	d := &app2.Dependency{}
 	d.Inject(conf)
 	r := chi.NewRouter()
-	app.Routing(r, d)
+	app2.Routing(r, d)
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 
 	server := http.Server{

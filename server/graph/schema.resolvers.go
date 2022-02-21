@@ -6,21 +6,19 @@ package graph
 import (
 	"context"
 	"encoding/json"
-	"fmt"
+	generated2 "github.com/hayashiki/chat-boiler/server/graph/generated"
+	model2 "github.com/hayashiki/chat-boiler/server/graph/model"
+	message2 "github.com/hayashiki/chat-boiler/server/infra/ds/message"
+	room2 "github.com/hayashiki/chat-boiler/server/infra/ds/room"
 	"log"
 
-	"github.com/hayashiki/chat-boiler/server/src/graph/generated"
-	"github.com/hayashiki/chat-boiler/server/src/graph/model"
-	"github.com/hayashiki/chat-boiler/server/src/infra/ds/message"
-	"github.com/hayashiki/chat-boiler/server/src/infra/ds/room"
 	"go.mercari.io/datastore/boom"
 )
 
-func (r *mutationResolver) CreateRoom(ctx context.Context, name string, description *string) (*model.Room, error) {
-	log.Println("called")
-	newRoom := &room.Entity{}
+func (r *mutationResolver) CreateRoom(ctx context.Context, input model2.RoomInput) (*model2.Room, error) {
+	newRoom := &room2.Entity{}
 	if err := r.transaction.RunInTransaction(ctx, func(tx *boom.Transaction) error {
-		newRoom = room.NewEntity(name, *description)
+		newRoom = room2.NewEntity(input.Name, input.Description)
 		log.Println("called", newRoom)
 		if err := r.roomRepo.Put(tx, newRoom); err != nil {
 			log.Println("called err", err)
@@ -34,11 +32,11 @@ func (r *mutationResolver) CreateRoom(ctx context.Context, name string, descript
 	return newRoom.ToModel(), nil
 }
 
-func (r *mutationResolver) PostMessage(ctx context.Context, input model.CreateMessageInput) (*model.Message, error) {
+func (r *mutationResolver) CreateMessage(ctx context.Context, input model2.CreateMessageInput) (*model2.Message, error) {
 	log.Println("called")
-	newMessage := &message.Entity{}
+	newMessage := &message2.Entity{}
 	if err := r.transaction.RunInTransaction(ctx, func(tx *boom.Transaction) error {
-		newMessage = message.NewEntity(input.RoomID, input.Text)
+		newMessage = message2.NewEntity(input.RoomID, input.Text)
 		log.Println("called", newMessage)
 		if err := r.messageRepo.Put(tx, newMessage); err != nil {
 			log.Println("called err", err)
@@ -57,17 +55,25 @@ func (r *mutationResolver) PostMessage(ctx context.Context, input model.CreateMe
 	return newMessage.ToModel(), nil
 }
 
-func (r *queryResolver) Rooms(ctx context.Context) ([]*model.Room, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *queryResolver) Rooms(ctx context.Context) ([]*model2.Room, error) {
+	rooms, err := r.roomRepo.GetAll(ctx)
+	if err != nil {
+		return nil, err
+	}
+	mRooms := make([]*model2.Room, len(rooms))
+	for i, r := range rooms {
+		mRooms[i] = r.ToModel()
+	}
+	return mRooms, err
 }
 
-func (r *queryResolver) Messages(ctx context.Context, roomID string) ([]*model.Message, error) {
+func (r *queryResolver) Messages(ctx context.Context, roomID string) ([]*model2.Message, error) {
 	entities, err := r.messageRepo.GetAll(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	messages := make([]*model.Message, len(entities))
+	messages := make([]*model2.Message, len(entities))
 
 	for i, e := range entities {
 		messages[i] = e.ToModel()
@@ -76,9 +82,9 @@ func (r *queryResolver) Messages(ctx context.Context, roomID string) ([]*model.M
 	return messages, nil
 }
 
-func (r *subscriptionResolver) MessagePosted(ctx context.Context, roomID string) (<-chan *model.Message, error) {
+func (r *subscriptionResolver) MessagePosted(ctx context.Context, roomID string) (<-chan *model2.Message, error) {
 	log.Println("MessagePosted")
-	messageChan := make(chan *model.Message, 1)
+	messageChan := make(chan *model2.Message, 1)
 	log.Println("MessagePosted 0", messageChan)
 	r.mutex.Lock()
 	r.messageChannels[roomID] = messageChan
@@ -97,13 +103,13 @@ func (r *subscriptionResolver) MessagePosted(ctx context.Context, roomID string)
 }
 
 // Mutation returns generated.MutationResolver implementation.
-func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
+func (r *Resolver) Mutation() generated2.MutationResolver { return &mutationResolver{r} }
 
 // Query returns generated.QueryResolver implementation.
-func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
+func (r *Resolver) Query() generated2.QueryResolver { return &queryResolver{r} }
 
 // Subscription returns generated.SubscriptionResolver implementation.
-func (r *Resolver) Subscription() generated.SubscriptionResolver { return &subscriptionResolver{r} }
+func (r *Resolver) Subscription() generated2.SubscriptionResolver { return &subscriptionResolver{r} }
 
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }

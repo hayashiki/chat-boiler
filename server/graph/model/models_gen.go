@@ -17,9 +17,13 @@ type Message struct {
 }
 
 type Room struct {
-	ID          string     `json:"id"`
-	Name        string     `json:"name"`
-	Description *string    `json:"description"`
-	Disabled    bool       `json:"disabled"`
-	OwnMessages []*Message `json:"own_messages"`
+	ID          string  `json:"id"`
+	Name        string  `json:"name"`
+	Description *string `json:"description"`
+	Disabled    bool    `json:"disabled"`
+}
+
+type RoomInput struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
 }

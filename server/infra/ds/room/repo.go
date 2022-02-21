@@ -2,7 +2,7 @@ package room
 
 import (
 	"context"
-	"github.com/hayashiki/chat-boiler/server/src/infra/ds"
+	ds2 "github.com/hayashiki/chat-boiler/server/infra/ds"
 	"go.mercari.io/datastore"
 
 	"github.com/pkg/errors"
@@ -11,6 +11,7 @@ import (
 
 type Repository interface {
 	Get(ctx context.Context, id string) (*Entity, error)
+	GetAll(ctx context.Context) ([]*Entity, error)
 	Put(tx *boom.Transaction, item *Entity) error
 }
 
@@ -18,15 +19,24 @@ func NewRepository() Repository {
 	return &repository{}
 }
 
-type repository struct {
-	//dsCli *datastore.Client
+type repository struct {}
+
+func (r *repository) GetAll(ctx context.Context) ([]*Entity, error) {
+	b := ds2.FromContext(ctx)
+	q := b.Client.NewQuery(kind)
+
+	var entities []*Entity
+	if _, err := b.GetAll(q, &entities); err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return entities, nil
 }
 
 func (r *repository) Get(ctx context.Context, id string) (*Entity, error) {
 	entity := &Entity{
 		ID: id,
 	}
-	b := ds.FromContext(ctx)
+	b := ds2.FromContext(ctx)
 	if err := b.Get(entity); err != nil {
 		if err == datastore.ErrNoSuchEntity {
 			return nil, errors.WithStack(errors.New("entity not found"))

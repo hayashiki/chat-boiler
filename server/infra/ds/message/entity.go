@@ -2,7 +2,7 @@ package message
 
 import (
 	"github.com/google/uuid"
-	"github.com/hayashiki/chat-boiler/server/src/graph/model"
+	model2 "github.com/hayashiki/chat-boiler/server/graph/model"
 )
 
 const kind = "Message"
@@ -24,8 +24,8 @@ func NewEntity(roomID string, text string) *Entity {
 	}
 }
 
-func (e *Entity) ToModel() *model.Message {
-	return &model.Message{
+func (e *Entity) ToModel() *model2.Message {
+	return &model2.Message{
 		ID:     e.ID,
 		RoomID: e.RoomID,
 		Text:   e.Text,

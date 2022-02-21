@@ -2,7 +2,7 @@ package message
 
 import (
 	"context"
-	"github.com/hayashiki/chat-boiler/server/src/infra/ds"
+	ds2 "github.com/hayashiki/chat-boiler/server/infra/ds"
 	"github.com/pkg/errors"
 	"go.mercari.io/datastore/boom"
 )
@@ -15,21 +15,17 @@ type Repository interface {
 
 //dsCli *datastore.Client
 func NewRepository() Repository {
-	return &repository{
-		//dsCli: dsCli,
-	}
+	return &repository{}
 }
 
-type repository struct {
-	//dsCli *datastore.Client
-}
+type repository struct {}
 
 func (r *repository) Get(ctx context.Context, id string) (*Entity, error) {
 	panic("implement me")
 }
 
 func (r *repository) GetAll(ctx context.Context) ([]*Entity, error) {
-	b := ds.FromContext(ctx)
+	b := ds2.FromContext(ctx)
 	q := b.Client.NewQuery(kind)
 
 	var entities []*Entity

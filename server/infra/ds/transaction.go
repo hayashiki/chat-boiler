@@ -2,7 +2,7 @@ package ds
 
 import (
 	"context"
-	"github.com/hayashiki/chat-boiler/server/src/config"
+	config2 "github.com/hayashiki/chat-boiler/server/config"
 	"github.com/pkg/errors"
 	"log"
 
@@ -64,7 +64,7 @@ func (t *datastoreTransactor) RunInTransaction(ctx context.Context, fn func(tx *
 }
 
 func FromContext(ctx context.Context) *boom.Boom {
-	cli, err := datastore.NewClient(ctx, config.GetProject())
+	cli, err := datastore.NewClient(ctx, config2.GetProject())
 	log.Println("cli", cli)
 	if err != nil {
 		log.Println("cli", err)
@@ -76,9 +76,3 @@ func FromContext(ctx context.Context) *boom.Boom {
 	}
 	return boom.FromClient(ctx, ds)
 }
-
-
-
-////////////////////
-
-
