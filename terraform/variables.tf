@@ -16,6 +16,11 @@ variable "name" {
   default = "chat-boiler-api"
 }
 
+variable "repo" {
+  type    = string
+  default = "hayashiki/chat-boiler"
+}
+
 variable "gar_repository" {
   type    = string
   default = "hayashiki"

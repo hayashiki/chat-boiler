@@ -24,7 +24,7 @@ resource "google_service_account_iam_member" "pool_impersonation" {
   provider           = google-beta
   service_account_id = "projects/${var.project}/serviceAccounts/${google_service_account.github_actions.email}"
   role               = "roles/iam.workloadIdentityUser"
-  member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github_pool.name}/attribute.repository/hayashiki/go-boiler"
+  member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github_pool.name}/attribute.repository/${var.repo}"
 }
 
 output "workload_identity_pool_id" {
