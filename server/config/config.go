@@ -1,7 +1,10 @@
 package config
 
 import (
+	"context"
+	"fmt"
 	"github.com/kelseyhightower/envconfig"
+	"golang.org/x/oauth2/google"
 	"log"
 	"os"
 
@@ -19,8 +22,23 @@ func NewConfig() (Config, error) {
 	return env, err
 }
 
+func GetProject() (string, error) {
+	ctx := context.Background()
+	cred, err := google.FindDefaultCredentials(ctx)
+	if err != nil {
+		return "", fmt.Errorf("failed to find default credentials: %w", err)
+	}
+
+	if cred.ProjectID == "" {
+		return "", fmt.Errorf("project ID not found")
+	}
+
+	return cred.ProjectID, nil
+}
+
+
 // GetProject on Google Cloud
-func GetProject() string {
+func GetProject2() string {
 	var (
 		project string
 		err     error
@@ -32,7 +50,7 @@ func GetProject() string {
 	}
 
 	project, err = metadata.ProjectID()
-	log.Println("sokutei end")
+	log.Println("sokutei end", project)
 	if err != nil {
 		if project = os.Getenv("GCP_PROJECT"); project == "" {
 			// TODO: if emulator

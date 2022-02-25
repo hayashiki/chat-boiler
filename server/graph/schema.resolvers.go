@@ -16,6 +16,7 @@ import (
 )
 
 func (r *mutationResolver) CreateRoom(ctx context.Context, input model2.RoomInput) (*model2.Room, error) {
+	log.Println("start CreateRoom")
 	newRoom := &room2.Entity{}
 	if err := r.transaction.RunInTransaction(ctx, func(tx *boom.Transaction) error {
 		newRoom = room2.NewEntity(input.Name, input.Description)
@@ -29,6 +30,7 @@ func (r *mutationResolver) CreateRoom(ctx context.Context, input model2.RoomInpu
 		log.Println("err", err)
 		return nil, err
 	}
+	log.Println("end CreateRoom")
 	return newRoom.ToModel(), nil
 }
 

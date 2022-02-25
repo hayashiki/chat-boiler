@@ -64,10 +64,12 @@ func (t *datastoreTransactor) RunInTransaction(ctx context.Context, fn func(tx *
 }
 
 func FromContext(ctx context.Context) *boom.Boom {
-	cli, err := datastore.NewClient(ctx, config2.GetProject())
-	log.Println("cli", cli)
+	proj, err := config2.GetProject()
+
+	cli, err := datastore.NewClient(ctx, "chat-boiler-t1")
+	log.Println("proj", proj)
 	if err != nil {
-		log.Println("cli", err)
+		log.Println("ds cli error", err)
 		panic(err)
 	}
 	ds, err := clouddatastore.FromClient(ctx, cli)
