@@ -31,7 +31,6 @@ func (d *Dependency) Inject(conf config2.Config) {
 	//tran := ds.NewTransaction(dsCliFunc)
 
 	redisUrl := os.Getenv("REDIS_URL")
-	//redisUrl := "redis://localhost:6379"
 	redisClient, err := redis2.NewRedisClient(redisUrl)
 	if err != nil {
 		panic(err)

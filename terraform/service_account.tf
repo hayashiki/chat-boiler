@@ -9,12 +9,18 @@ resource "google_project_iam_member" "github_actions_default" {
   project = var.project
   for_each = toset([
     "roles/cloudbuild.builds.builder",
+    # need for vpc network
+    "roles/compute.admin",
     "roles/iam.serviceAccountUser",
     "roles/iam.workloadIdentityPoolViewer",
+    "roles/iam.workloadIdentityUser",
+    "roles/iam.serviceAccountAdmin",
     "roles/run.admin",
     "roles/resourcemanager.projectIamAdmin", // Enable grant project IAM role
     "roles/serviceusage.serviceUsageAdmin", // Enable APIs using serviceusage
     "roles/storage.admin",
+    "roles/redis.editor",
+    "roles/vpcaccess.admin" //サーバーレス VPC アクセス管理者
   ])
   member = "serviceAccount:${google_service_account.github_actions.email}"
   role   = each.value
@@ -39,7 +45,8 @@ resource "google_project_iam_member" "run_sa_default" {
     "roles/run.admin",
     "roles/serviceusage.serviceUsageAdmin", // Enable APIs using serviceusage
     "roles/storage.admin",
+    "roles/datastore.user",
   ])
-  member = "serviceAccount:${google_service_account.github_actions.email}"
+  member = "serviceAccount:${google_service_account.run_sa.email}"
   role   = each.value
 }

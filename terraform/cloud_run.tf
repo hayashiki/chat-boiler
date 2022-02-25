@@ -27,7 +27,6 @@ resource "google_cloud_run_service" "default" {
 
       containers {
         image = local.image
-#        image = "gcr.io/go-boiler-t1/go-boiler-api:latest"
 
         resources {
           limits = {
@@ -35,12 +34,22 @@ resource "google_cloud_run_service" "default" {
             memory = "128Mi"
           }
         }
+
+        # if use redis
+        env {
+          name  = "REDIS_URL"
+          value = "redis://${google_redis_instance.cache.host}:6379"
+        }
       }
     }
 
     metadata {
       annotations = {
         "autoscaling.knative.dev/maxScale" = "1"
+        "autoscaling.knative.dev/minScale" : "0",
+        # if use vpc connector
+        "run.googleapis.com/vpc-access-connector" : google_vpc_access_connector.default.name
+        "run.googleapis.com/vpc-access-egress" : "private-ranges-only"
       }
 
       labels = {
