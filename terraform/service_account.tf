@@ -20,7 +20,7 @@ resource "google_project_iam_member" "github_actions_default" {
     "roles/serviceusage.serviceUsageAdmin", // Enable APIs using serviceusage
     "roles/storage.admin",
     "roles/redis.editor",
-    "roles/vpcaccess.admin" //サーバーレス VPC アクセス管理者
+    "roles/vpcaccess.admin", //サーバーレス VPC アクセス管理者
   ])
   member = "serviceAccount:${google_service_account.github_actions.email}"
   role   = each.value
