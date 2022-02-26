@@ -1,4 +1,4 @@
-name: test-and-build
+name: test-and-apply
 on:
   push:
     paths:
