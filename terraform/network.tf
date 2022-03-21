@@ -1,7 +1,7 @@
 # redis対応で追加
 resource "google_compute_network" "vpc" {
   project = var.project
-  name    = "vpc"
+  name    = "vpc2"
   depends_on = [
     google_project_service.enable_api
   ]
