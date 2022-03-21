@@ -19,7 +19,8 @@ resource "google_vpc_access_connector" "default" {
   name          = "vpc-connector"
   region        = var.region
   project       = var.project
-  network       = google_compute_network.vpc.name
+#  subnet側で対応したので削除
+#  network       = google_compute_network.vpc.name
   machine_type  = "f1-micro"
   subnet {
     name = google_compute_subnetwork.default.name
