@@ -1,5 +1,5 @@
 # redis対応で追加
-resource "google_compute_network" "vpc" {
+resource "google_compute_network" "serverless-vpc" {
   project = var.project
   name    = "vpc2"
   depends_on = [
@@ -14,12 +14,12 @@ resource "google_compute_subnetwork" "default" {
   ip_cidr_range = "10.8.0.0/28"
   name          = "subnetwork-serverless"
   region        = var.region
-  network       = google_compute_network.vpc.id
+  network       = google_compute_network.serverless-vpc.id
 }
 
 resource "google_compute_router" "default" {
   name = "router-serverless"
-  network = google_compute_network.vpc.name
+  network = google_compute_network.serverless-vpc.name
   region = var.region
 }
 

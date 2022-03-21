@@ -9,7 +9,7 @@ resource "google_redis_instance" "cache" {
   name               = "cache"
   region             = var.region
   memory_size_gb     = 1
-  authorized_network = google_compute_network.vpc.name
+  authorized_network = google_compute_network.serverless-vpc.name
 }
 
 resource "google_vpc_access_connector" "default" {
