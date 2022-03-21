@@ -2,7 +2,8 @@
 
 resource "google_redis_instance" "cache" {
   depends_on = [
-    google_project_service.enable_api
+    google_project_service.enable_api,
+    google_project_iam_member.github_actions_default
   ]
   project            = var.project
   name               = "cache"
