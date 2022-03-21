@@ -98,14 +98,10 @@ jobs:
         env:
           GOOGLE_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
 
-      - name: Set image_tag
-        run: |-
-          echo "image_tag = \"${{ github.sha }}\"" >> terraform.auto.tfvars
-
       - name: Terraform Apply
         id: apply
         run: |-
-          terraform apply PLAN
+          terraform apply PLAN --auto-aprove
         working-directory: ./terraform
         env:
           GOOGLE_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
@@ -142,27 +138,3 @@ jobs:
       - name: Test
         run: go test ./...
         working-directory: ./server
-#  deploy:
-#    if: github.event_name == 'push'
-#    needs: [docker_push]
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v2
-#
-#      - uses: google-github-actions/setup-gcloud@v0
-#        with:
-#          project_id: ${{ env.GCP_PROJECT }}
-#
-#      - id: auth
-#        name: Authenticate to Google Cloud
-#        uses: google-github-actions/auth@v0.3.1
-#        with:
-#          create_credentials_file: true
-#          workload_identity_provider: projects/${{ env.GCP_PROJECT_NUM }}/locations/global/workloadIdentityPools/github-actions/providers/github-actions
-#          service_account: github-actions@${{ env.GCP_PROJECT }}.iam.gserviceaccount.com
-#
-#      - id: gcloud
-#        name: Gcloud auth login
-#        run: |-
-#          gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"

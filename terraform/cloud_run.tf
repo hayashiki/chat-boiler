@@ -9,8 +9,7 @@ data "google_cloud_run_service" "default" {
 
 locals {
   current_image = data.google_cloud_run_service.default.template != null ? data.google_cloud_run_service.default.template.0.spec.0.containers.0.image : null
-  new_image     = "gcr.io/${var.project}/${var.image_name}:${var.image_tag}"
-  image         = (local.current_image != null && var.image_tag == "latest") ? local.current_image : local.new_image
+  timestamp = formatdate("YYYY-MM-DD-hh:mm:ss", timestamp())
 }
 
 resource "google_cloud_run_service" "default" {
@@ -26,7 +25,7 @@ resource "google_cloud_run_service" "default" {
       service_account_name = google_service_account.run_sa.email
 
       containers {
-        image = local.image
+        image = local.current_image
 
         resources {
           limits = {
@@ -40,6 +39,11 @@ resource "google_cloud_run_service" "default" {
           name  = "REDIS_URL"
           value = "redis://${google_redis_instance.cache.host}:6379"
         }
+        # Hack to force terraform to re-deploy this service (e.g. update latest image)
+        env {
+          name = "TERRAFORM_UPDATED_AT"
+          value = local.timestamp
+        }
       }
     }
 
@@ -49,7 +53,7 @@ resource "google_cloud_run_service" "default" {
         "autoscaling.knative.dev/minScale" : "0",
         # if use vpc connector
         "run.googleapis.com/vpc-access-connector" : google_vpc_access_connector.default.name
-        "run.googleapis.com/vpc-access-egress" : "private-ranges-only"
+        "run.googleapis.com/vpc-access-egress" : "all-traffic" #"private-ranges-only"
       }
 
       labels = {

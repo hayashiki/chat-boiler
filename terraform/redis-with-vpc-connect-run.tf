@@ -1,10 +1,4 @@
-resource "google_compute_network" "vpc" {
-  project = var.project
-  name    = "vpc"
-  depends_on = [
-    google_project_service.enable_api
-  ]
-}
+
 
 resource "google_redis_instance" "cache" {
   depends_on = [
@@ -27,5 +21,9 @@ resource "google_vpc_access_connector" "default" {
   project       = var.project
   network       = google_compute_network.vpc.name
   machine_type  = "f1-micro"
-  ip_cidr_range = "10.8.0.0/28"
+  subnet {
+    name = google_compute_subnetwork.default.name
+  }
+#  subnet側で対応したので削除
+#  ip_cidr_range = "10.8.0.0/28"
 }
